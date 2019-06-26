@@ -11,7 +11,16 @@ MAX_PENDING_CONN = 5
 SERVER_PORT = 12345
 
 
+# listen for new connection and add it to the connections array
+def acquire_new_connections(s, clients):
+    c, addr = s.accept()  # Establish connection with client.
+    clients.append(c)
+    print("New connections from : "+addr)
+
+
 def main():
+
+    print("Starting server ...")
 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)         # Create a socket object
     host = socket.gethostname()                                   # Get local machine name
@@ -26,7 +35,7 @@ def main():
 
     while True:
 
-        thread = threading.Thread(acquire_new_connections(s, clients))
+        thread = threading.Thread(acquire_new_connections(s, clients))  # check for new connections
         thread.start()
 
         thread.join(NEW_CONN_TIMEOUT)
@@ -42,7 +51,7 @@ def main():
                 clients.remove(c)                   # remove client
                 c.close()                           # Close the connection
 
-            elif msg_from_client == "!refresh":     # Send
+            elif msg_from_client == "!refresh":     # Send latest messages
                 c.sendAll(msg_buffer)
 
             else:
@@ -56,7 +65,3 @@ if __name__ == '__main__':
     main()
 
 
-# listen for new connection and add it to the connections array
-def acquire_new_connections(s, clients):
-    c, addr = s.accept()  # Establish connection with client.
-    clients.append(c)
