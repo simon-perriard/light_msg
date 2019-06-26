@@ -12,8 +12,14 @@ SERVER_PORT = 12345
 
 def flush_buffer(msg_buffer, c):
 
+    str = ''
+
     for i in range(0, len(msg_buffer)):
-        c.send(crypto.encrypt(msg_buffer[i]))
+
+        str += msg_buffer[i] + '\n'
+
+    c.sendall(crypto.encrypt(str))
+
 
 def create_socket():
 
@@ -68,7 +74,7 @@ def main():
             break
 
         msg_from_client = crypto.decrypt(buffer)        # receive message from client
-        print(msg_from_client)
+        print(msg_from_client.decode())
 
         if not msg_from_client:
             break
@@ -78,7 +84,7 @@ def main():
             print("request refresh")
 
         else:
-            msg_buffer.append(msg_from_client)            # add to messages
+            msg_buffer.append(msg_from_client.decode())            # add to messages
 
             if len(msg_buffer) > MSG_BUFFER_SIZE:         # if buffer is full, remove oldest message
                 msg_buffer.remove(0)
