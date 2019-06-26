@@ -35,10 +35,13 @@ def main():
 
     while True:
 
-        thread = threading.Thread(acquire_new_connections(s, clients))  # check for new connections
-        thread.start()
+        thread = threading.Thread(target=acquire_new_connections, args=(s, clients,))  # check for new connections
 
+        thread.start()
         thread.join(NEW_CONN_TIMEOUT)
+
+        if thread.is_alive():
+            thread.join()
 
         for c in clients:
 
