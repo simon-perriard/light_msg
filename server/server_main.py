@@ -31,10 +31,6 @@ def main():
 
         thread.join(NEW_CONN_TIMEOUT)
 
-        print 'Got connection from', addr
-        msg = 'Thank you for connecting'
-        c.send(crypto.encrypt(msg))
-
         for c in clients:
 
             msg_from_client = crypto.decrypt(c.recv())         # receive message from client  recv(1024) ??
