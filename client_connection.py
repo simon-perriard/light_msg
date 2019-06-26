@@ -1,19 +1,26 @@
 import client_config
 import socket
+import os
 
 pseudo = client_config.pseudo
 server_ip = client_config.server_ip
 server_port = client_config.server_port
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_address = (server_ip, server_port)
 
-try:
-    server_address = (server_ip, server_port)
-    print('Attempting connection with', server_ip, ':', server_port, 'with pseudo :', pseudo)
 
+def open_connection():
+    # print('INFO: Attempting connection with', server_ip, ':', server_port, 'with pseudo :', pseudo)
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect(server_address)
 
-except Exception as e:
-    print('Unable to connect :', e)
-    exit()
-else:
-    print('Connection successful !')
+    return sock
+
+
+def close_connection(sock):
+    sock.close()
+
+
+def check_server():
+    response = os.system("ping -c 1 -w 2 " + server_ip + " >/dev/null 2>&1")
+
+    return response == 0
